@@ -125,14 +125,25 @@
         <div class="hero__layer"></div>
         <div class="container hero__container">
           <div class="hero__copy">
-            <span class="eyebrow">Goa's community marketplace</span>
             <h1>Explore coastal craft and daily catches in real time</h1>
             <p>
-              Amcho Pasro connects curious buyers with independent sellers who
-              share what they have on hand—fresh finds, handmade pieces, and
-              seasonal staples. Browse what’s available and reach out directly
-              when something catches your eye.
+              Meet the makers, growers, and fishers shaping Goa’s daily rhythm.
+              Finding what you need anywhere in goa is as simple as scrolling on a map.
             </p>
+            <div class="hero__metrics" aria-label="Marketplace stats">
+              <div class="metric-card">
+                <span class="metric-card__value">150+</span>
+                <span class="metric-card__label">Active sellers</span>
+              </div>
+              <div class="metric-card">
+                <span class="metric-card__value">12</span>
+                <span class="metric-card__label">Local markets</span>
+              </div>
+              <div class="metric-card">
+                <span class="metric-card__value">1000+</span>
+                <span class="metric-card__label">Active users</span>
+              </div>
+            </div>
             <div class="hero__actions">
               <a href="{{ url_for('products') }}" class="cta-button primary"
                 >Browse the marketplace</a
@@ -146,20 +157,6 @@
                 >List your store</a
               >
               {% endif %}
-            </div>
-            <div class="hero__chips" aria-label="Popular categories">
-              <span class="chip">
-                <i class="fa-solid fa-basket-shopping"></i>
-                Fresh produce
-              </span>
-              <span class="chip">
-                <i class="fa-solid fa-gift"></i>
-                Handmade keepsakes
-              </span>
-              <span class="chip">
-                <i class="fa-solid fa-water"></i>
-                Coastal essentials
-              </span>
             </div>
           </div>
           <div class="hero__media">
@@ -181,129 +178,45 @@
         </div>
       </section>
 
-      <section class="highlight-strip" aria-label="Marketplace highlights">
-        <div class="container highlight-strip__container">
-          <div class="highlight-strip__item">
-            <i class="fa-solid fa-store"></i>
-            <span>Independent storefronts across Goa</span>
-          </div>
-          <div class="highlight-strip__item">
-            <i class="fa-solid fa-message"></i>
-            <span>Direct messages between buyers and sellers</span>
-          </div>
-          <div class="highlight-strip__item">
-            <i class="fa-solid fa-calendar-day"></i>
-            <span>Seasonal drops and weekly pop-ups</span>
-          </div>
-          <div class="highlight-strip__item">
-            <i class="fa-solid fa-location-crosshairs"></i>
-            <span>Map-friendly store discovery</span>
-          </div>
-          <div
-            class="highlight-strip__item highlight-strip__item--ghost"
-            aria-hidden="true"
-          >
-            <i class="fa-solid fa-store"></i>
-            <span>Independent storefronts across Goa</span>
-          </div>
-          <div
-            class="highlight-strip__item highlight-strip__item--ghost"
-            aria-hidden="true"
-          >
-            <i class="fa-solid fa-message"></i>
-            <span>Direct messages between buyers and sellers</span>
-          </div>
-          <div
-            class="highlight-strip__item highlight-strip__item--ghost"
-            aria-hidden="true"
-          >
-            <i class="fa-solid fa-calendar-day"></i>
-            <span>Seasonal drops and weekly pop-ups</span>
-          </div>
-          <div
-            class="highlight-strip__item highlight-strip__item--ghost"
-            aria-hidden="true"
-          >
-            <i class="fa-solid fa-location-crosshairs"></i>
-            <span>Map-friendly store discovery</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="market-preview">
-        <div class="container">
-          <div class="section-heading">
+      <section class="experience-panels" aria-label="Marketplace snapshot">
+        <div class="container experience-panels__container">
+          <article class="experience-card">
+            <div class="experience-card__icon">
+              <i class="fa-solid fa-map-location-dot"></i>
+            </div>
             <div>
-              <h2>Peek at what sellers are sharing</h2>
+              <h3>Map-first discovery</h3>
               <p>
-                Jump into the marketplace to explore current listings, view
-                pricing from each seller, and arrange the pickup details that
-                work for you.
+                Drop into the map to see who’s nearby, view routes, and bookmark
+                favorite sellers for later.
               </p>
             </div>
-            <a href="{{ url_for('products') }}" class="text-link"
-              >See all products <i class="fa-solid fa-arrow-right"></i
-            ></a>
-          </div>
-          <div class="preview-grid">
-            <article class="preview-card">
-              <div class="preview-card__image">
-                <img
-                  src="{{ url_for('static', filename='uploads/product_images/20251008_225221_star_crafting.png') }}"
-                  alt="Handmade craft kit"
-                />
-              </div>
-              <div class="preview-card__body">
-                <h3>Handcrafted kits &amp; eco gifts</h3>
-                <p>
-                  Makers from Anjuna share weekend-ready gift bundles with
-                  detailed product notes and custom add-ons.
-                </p>
-                <span class="preview-card__meta">
-                  <i class="fa-solid fa-location-dot"></i>
-                  Mapusa craft lane
-                </span>
-              </div>
-            </article>
-            <article class="preview-card">
-              <div class="preview-card__image">
-                <img
-                  src="{{ url_for('static', filename='uploads/product_images/20251005_222458_image_3.png') }}"
-                  alt="Fresh produce"
-                />
-              </div>
-              <div class="preview-card__body">
-                <h3>Farm-fresh greens</h3>
-                <p>
-                  Small farms keep their stalls updated with harvest notes,
-                  letting you coordinate pick-up right after picking.
-                </p>
-                <span class="preview-card__meta">
-                  <i class="fa-solid fa-location-dot"></i>
-                  Verna village hubs
-                </span>
-              </div>
-            </article>
-            <article class="preview-card">
-              <div class="preview-card__image">
-                <img
-                  src="{{ url_for('static', filename='uploads/product_images/20250929_201822_herb-kit.png') }}"
-                  alt="Herb kit"
-                />
-              </div>
-              <div class="preview-card__body">
-                <h3>DIY pantry staples</h3>
-                <p>
-                  From pickling kits to spice blends, browse ready-to-go sets
-                  with clear ingredient lists from homegrown brands.
-                </p>
-                <span class="preview-card__meta">
-                  <i class="fa-solid fa-location-dot"></i>
-                  Margao maker spaces
-                </span>
-              </div>
-            </article>
-          </div>
+          </article>
+                    <article class="experience-card">
+            <div class="experience-card__icon">
+              <i class="fa-solid fa-comments"></i>
+            </div>
+            <div>
+              <h3>Threaded conversations</h3>
+              <p>
+                Reddit-style threaded conversations on product posts and
+                store pages so buyers and sellers can swap notes in one place.
+              </p>
+            </div>
+          </article>
+          <article class="experience-card">
+            <div class="experience-card__icon">
+              <i class="fa-solid fa-store"></i>
+            </div>
+            <div>
+              <h3>Storefront pages</h3>
+              <p>
+                Each seller page highlights photos, pickup details, and ways to
+                reach them so you can confirm availability before you head out.
+              </p>
+            </div>
+          </article>
+
         </div>
       </section>
 

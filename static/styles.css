@@ -283,7 +283,6 @@ body {
 .page-section {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 20px;
 }
 
 .container {
@@ -347,13 +346,15 @@ body {
     padding: 0 15px 15px;
   }
 
-  .page-section {
-    padding: 30px 15px;
-  }
-
   .cta-button {
     padding: 14px 28px;
     font-size: 1rem;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .page-section {
+    padding: 30px 15px;
   }
 }
 
@@ -380,10 +381,6 @@ body {
 
   .main-content p {
     font-size: 1rem;
-  }
-
-  .page-section {
-    padding: 20px 10px;
   }
 
   .cta-button {
@@ -928,10 +925,6 @@ section .section-title {
 
   .main-content.has-hero {
     padding: 0;
-  }
-
-  .page-section {
-    padding: 20px 15px;
   }
 
   .container {

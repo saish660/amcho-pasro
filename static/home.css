@@ -721,20 +721,6 @@ main section .features_for {
   gap: 14px;
 }
 
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.95rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  padding: 8px 16px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
 .chip {
   display: inline-flex;
   align-items: center;
@@ -751,6 +737,35 @@ main section .features_for {
 
 .chip i {
   color: var(--secondary-color);
+}
+
+.hero__metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 14px;
+  margin: 22px 0 10px;
+}
+
+.metric-card {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 16px 18px;
+  text-align: center;
+  box-shadow: var(--glass-shadow-modern);
+  backdrop-filter: blur(8px);
+}
+
+.metric-card__value {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.metric-card__label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .hero__media {
@@ -798,36 +813,52 @@ main section .features_for {
   transform: translateY(-2px);
 }
 
-.highlight-strip {
+.experience-panels {
   background: var(--white);
-  box-shadow: 0 -10px 40px rgba(255, 174, 174, 0.18);
+  padding: 70px 0;
   position: relative;
   z-index: 2;
-  overflow: hidden;
 }
 
-.highlight-strip__container {
+.experience-panels__container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 24px;
-  padding: 36px 0;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 28px;
 }
 
-.highlight-strip__item {
+.experience-card {
   display: flex;
+  gap: 18px;
+  padding: 28px;
+  border-radius: 28px;
+  background: linear-gradient(145deg, #fff9f7, #ffffff);
+  border: 1px solid rgba(219, 52, 52, 0.12);
+  box-shadow: 0 20px 40px rgba(219, 52, 52, 0.08);
+  align-items: flex-start;
+}
+
+.experience-card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: rgba(219, 52, 52, 0.12);
+  display: inline-flex;
   align-items: center;
-  gap: 14px;
-  font-weight: 600;
-  color: var(--secondary-dark);
-}
-
-.highlight-strip__item--ghost {
-  display: none;
-}
-
-.highlight-strip__item i {
+  justify-content: center;
   color: var(--secondary-color);
-  font-size: 1.3rem;
+  font-size: 1.2rem;
+}
+
+.experience-card h3 {
+  margin: 0 0 8px;
+  color: var(--secondary-dark);
+  font-size: 1.2rem;
+}
+
+.experience-card p {
+  margin: 0;
+  color: var(--text-dark);
+  line-height: 1.6;
 }
 
 .market-preview {
@@ -1115,30 +1146,21 @@ main section .features_for {
     padding: 9px 14px;
     font-size: 0.9rem;
   }
+  .hero__metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .metric-card {
+    padding: 14px 12px;
+  }
   .hero-stack__item {
     font-size: 0.95rem;
     padding: 14px 16px;
   }
-  .highlight-strip__container {
-    display: inline-flex;
-    align-items: stretch;
-    flex-wrap: nowrap;
-    gap: 18px;
-    padding: 24px 16px 24px;
-    width: max-content;
-    max-width: none;
-    animation: highlight-marquee 18s linear infinite;
-    will-change: transform;
+  .experience-panels__container {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   }
-  .highlight-strip__item {
-    flex: 0 0 auto;
-    min-width: 210px;
-  }
-  .highlight-strip__item--ghost {
-    display: flex;
-  }
-  .highlight-strip__item i {
-    font-size: 1.2rem;
+  .experience-card {
+    padding: 24px;
   }
   .preview-grid {
     grid-template-columns: 1fr;
@@ -1161,8 +1183,16 @@ main section .features_for {
   .hero--landing {
     padding: calc(var(--navbar-height) + 12px) 0 52px;
   }
-  .highlight-strip__container {
-    padding: 20px 12px 22px;
+  .hero__metrics {
+    grid-template-columns: 1fr;
+  }
+  .experience-card {
+    flex-direction: column;
+    padding: 22px;
+  }
+  .experience-card__icon {
+    width: 44px;
+    height: 44px;
   }
   .preview-card__body {
     padding: 20px;
@@ -1177,16 +1207,8 @@ main section .features_for {
 }
 
 @media screen and (max-width: 640px) and (prefers-reduced-motion: reduce) {
-  .highlight-strip__container {
-    animation: none;
-  }
-}
-
-@keyframes highlight-marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
+  .experience-card,
+  .metric-card {
+    transition: none;
   }
 }
