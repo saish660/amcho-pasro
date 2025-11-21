@@ -88,6 +88,65 @@ body {
   scroll-padding-top: calc(var(--navbar-height) + 16px);
 }
 
+.map-pin {
+  background: transparent !important;
+  border: none !important;
+  width: 34px;
+  height: 44px;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.map-pin__inner {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--secondary-color),
+    var(--primary-dark)
+  );
+  color: var(--white);
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--white);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.25);
+  overflow: hidden;
+}
+
+.map-pin__inner span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.map-pin__inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.map-pin__inner::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 12px;
+  background: inherit;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
 .navbar {
   position: sticky;
   top: 0;
@@ -354,7 +413,7 @@ body {
 
 @media screen and (min-width: 768px) {
   .page-section {
-    padding: 30px 15px;
+    padding: 20px;
   }
 }
 

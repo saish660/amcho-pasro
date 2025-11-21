@@ -168,12 +168,41 @@ class Category(db.Model):
     def all():
         return Category.query.order_by(Category.name.asc()).all()
 
+
+def resolve_store_image_path(user):
+    filename = user.store_image
+    if not filename or filename == "default_store_img.png":
+        rel_path = "images/default_store_img.png"
+    elif filename.startswith(("uploads/", "images/")):
+        rel_path = filename
+    else:
+        rel_path = f"uploads/{filename.lstrip('/')}"
+    return url_for("static", filename=rel_path)
+
 @app.route("/")
 def index():
     # If user is already logged in, redirect to products page
     if current_user.is_authenticated:
         return redirect(url_for("products"))
-    return render_template("index.html")
+
+    sellers = User.query.filter_by(user_type="seller").all()
+    stores = []
+    for u in sellers:
+        if u.store_latitude is None or u.store_longitude is None:
+            continue
+        stores.append(
+            {
+                "id": u.id,
+                "name": u.store_name or u.username,
+                "city": u.store_city,
+                "location": u.store_location,
+                "lat": u.store_latitude,
+                "lng": u.store_longitude,
+                "image": resolve_store_image_path(u),
+            }
+        )
+
+    return render_template("index.html", stores=stores)
 
 @app.route("/products")
 @login_required
@@ -583,6 +612,7 @@ def store_finder():
             'rating': u.get_store_rating(),
             'reviews': u.get_review_count(),
             'product_count': len(getattr(u, 'products', []) or []),
+            'image': resolve_store_image_path(u),
         })
     return render_template("store-finder.html", stores=stores)
 

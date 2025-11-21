@@ -128,9 +128,36 @@
     clusterGroup.clearLayers();
   }
 
+  function escapeAttr(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function buildStoreIcon(store) {
+    const initial = (store?.name || "S").trim().charAt(0).toUpperCase() || "S";
+    const photo = store?.image;
+    const hasImage = Boolean(photo);
+    const photoHtml = hasImage
+      ? `<img src="${escapeAttr(photo)}" alt="${escapeAttr(
+          store?.name
+        )} thumbnail" loading="lazy" />`
+      : `<span>${initial}</span>`;
+    const extraClass = hasImage ? " map-pin__inner--photo" : "";
+    return L.divIcon({
+      className: "map-pin leaflet-div-icon",
+      html: `<div class="map-pin__inner${extraClass}">${photoHtml}</div>`,
+      iconSize: [34, 44],
+      iconAnchor: [17, 44],
+      popupAnchor: [0, -42],
+    });
+  }
+
   function addStoreMarker(s) {
     if (!(s.lat != null && s.lng != null)) return null;
-    const m = L.marker([s.lat, s.lng]);
+    const m = L.marker([s.lat, s.lng], { icon: buildStoreIcon(s) });
     const popup = `
       <div style="min-width:180px">
         <strong>${s.name || "Store"}</strong><br/>

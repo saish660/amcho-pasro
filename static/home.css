@@ -255,6 +255,102 @@
   line-height: 1.6;
 }
 
+/* Goa Map Section */
+.goa-map-section {
+  background: var(--white);
+  padding: 80px 0;
+}
+
+.goa-map__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 40px;
+  align-items: center;
+}
+
+.goa-map__copy h2 {
+  font-size: 2.2rem;
+  margin-bottom: 16px;
+  color: var(--secondary-dark);
+}
+
+.goa-map__copy p {
+  color: var(--text-gray);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.goa-map__list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.goa-map__list li {
+  padding-left: 20px;
+  position: relative;
+  color: var(--secondary-dark);
+}
+
+.goa-map__list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+}
+
+.goa-map__canvas-wrap {
+  position: relative;
+}
+
+.goa-map__canvas {
+  width: 100%;
+  min-height: 420px;
+  border-radius: var(--border-radius-xl);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.1);
+  border: 1px solid var(--light-gray);
+}
+
+.goa-map__hint {
+  margin-top: 14px;
+  font-size: 0.95rem;
+  color: var(--slate-500);
+}
+
+.goa-map__empty-note {
+  font-size: 0.95rem;
+  color: var(--slate-500);
+  margin-top: 12px;
+}
+
+.goa-map__empty {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.92);
+  padding: 16px 24px;
+  border-radius: var(--border-radius-large);
+  border: 1px dashed var(--light-gray);
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--text-gray);
+}
+
+.home-map-popup {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.home-map-popup a {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
