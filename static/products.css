@@ -11,24 +11,15 @@ main {
 .products-hero {
   background: linear-gradient(
     130deg,
-    rgba(80, 44, 44, 0.96),
-    rgba(219, 52, 52, 0.85) 55%,
-    rgba(255, 138, 138, 0.75)
+    var(--primary-darker),
+    var(--primary-color),
+    var(--primary-light)
   );
   padding: clamp(48px, 5vw, 72px) 0 clamp(20px, 4vw, 32px);
 }
 
-.products-hero::before {
-  background: radial-gradient(
-      circle at 18% 22%,
-      rgba(255, 255, 255, 0.24),
-      transparent 58%
-    ),
-    radial-gradient(
-      circle at 82% 12%,
-      rgba(255, 192, 192, 0.28),
-      transparent 55%
-    );
+.btn-ghost {
+  color: var(--secondary-color);
 }
 
 .products-hero__inner {
@@ -277,14 +268,12 @@ main {
   flex-direction: column;
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.98) 0%,
-    rgba(255, 237, 235, 0.92) 100%
+    rgba(var(--primary-rgb), 0.06) 0%,
+    rgba(var(--primary-rgb), 0.15) 100%
   );
   border-radius: 26px;
-  border: 1px solid rgba(219, 52, 52, 0.1);
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(184, 98, 98, 0.12),
-    0 12px 30px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 20px 40px rgba(var(--primary-rgb), 0.15);
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.35s ease, border-color 0.35s ease;
   cursor: pointer;
@@ -322,8 +311,7 @@ main {
 .product-card:hover,
 .product-card:focus-within {
   transform: translateY(-8px);
-  border-color: rgba(219, 52, 52, 0.25);
-  box-shadow: 0 30px 50px rgba(219, 52, 52, 0.18);
+  box-shadow: 0 30px 50px rgba(var(--primary-darker-rgb), 0.2);
 }
 
 .product-card:hover::before,
@@ -393,7 +381,6 @@ main {
 }
 
 .product-title {
-  color: var(--secondary-dark);
   font-size: 1.32rem;
   font-weight: 600;
   line-height: 1.35;
@@ -410,8 +397,7 @@ main {
   align-self: flex-start;
   padding: 0.38rem 0.85rem;
   border-radius: 999px;
-  background: rgba(219, 52, 52, 0.12);
-  color: var(--secondary-dark);
+  background: white;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -425,13 +411,12 @@ main {
   font-size: 1.28rem;
   font-weight: 700;
   color: var(--primary-darker);
-  background: rgba(219, 52, 52, 0.15);
+  background: rgba(var(--primary-rgb), 0.15);
   padding: 0.45rem 0.95rem;
   border-radius: 999px;
   max-width: 220px;
   min-width: 0;
   align-self: flex-start;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
 }
 
 .product-price__value {
@@ -490,7 +475,6 @@ main {
   padding: 16px;
   border-radius: 18px;
   background: rgba(255, 250, 250, 0.95);
-  border: 1px solid rgba(219, 52, 52, 0.18);
   display: flex;
   align-items: center;
   gap: 14px;
@@ -598,7 +582,7 @@ main {
 
 @media screen and (max-width: 520px) {
   .page-hero {
-    padding: 110px 0 60px;
+    padding: 50px 0 60px;
   }
 
   .products-grid {

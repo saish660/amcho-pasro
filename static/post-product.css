@@ -5,12 +5,16 @@ main {
 .post-product-hero {
   background: linear-gradient(
     130deg,
-    rgba(80, 44, 44, 0.96),
-    rgba(219, 52, 52, 0.82) 55%,
-    rgba(255, 180, 180, 0.75)
+    var(--primary-darker),
+    var(--primary-color),
+    var(--primary-light)
   );
   padding-bottom: clamp(30px, 5vw, 48px);
   color: rgba(255, 255, 255, 0.95);
+}
+
+.btn-ghost {
+  color: var(--secondary-light);
 }
 
 .post-product-hero__inner {

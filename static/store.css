@@ -1,19 +1,19 @@
 .store-hero {
   position: relative;
-  padding: 7.5rem 0 3.5rem;
+  padding: 3.5rem 0 3.5rem;
   color: var(--white);
   overflow: hidden;
   background: radial-gradient(
       circle at 10% 20%,
-      rgba(255, 255, 255, 0.2) 0,
-      rgba(255, 255, 255, 0) 50%
+      rgba(var(--primary-rgb), 0.2) 0,
+      rgba(var(--primary-rgb), 0) 50%
     ),
     radial-gradient(
       circle at 90% 10%,
-      rgba(255, 178, 178, 0.45) 0,
-      rgba(255, 178, 178, 0) 55%
+      rgba(var(--primary-rgb), 0.45) 0,
+      rgba(var(--primary-rgb), 0.05) 55%
     ),
-    linear-gradient(135deg, var(--primary-dark), var(--secondary-dark));
+    linear-gradient(135deg, var(--primary-light), var(--primary-dark));
 }
 
 .store-hero__backdrop,
@@ -25,7 +25,7 @@
 
 .store-hero__backdrop {
   background: url("images/hero-img.png") no-repeat center/cover;
-  opacity: 0.06;
+  opacity: 0.1;
 }
 
 .store-hero__glow {
@@ -936,7 +936,7 @@
 
 @media (max-width: 768px) {
   .store-hero {
-    padding-top: 6rem;
+    padding-top: 3rem;
   }
 
   .hero-stats {

@@ -28,6 +28,11 @@
           <li class="navbar-item">
             <a href="{{ url_for('products') }}" class="navbar-link">Products</a>
           </li>
+          <li class="navbar-item">
+            <a href="{{ url_for('store_finder') }}" class="navbar-link"
+              >Find Stores</a
+            >
+          </li>
           {% if current_user.is_seller() %}
           <li class="navbar-item">
             <a href="{{ url_for('post_product') }}" class="navbar-link active"
@@ -48,6 +53,7 @@
           <li class="navbar-item">
             <a href="{{ url_for('products') }}" class="navbar-link">Products</a>
           </li>
+          
           <li class="navbar-item">
             <a href="{{ url_for('login') }}" class="navbar-link">Login</a>
           </li>

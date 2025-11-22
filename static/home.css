@@ -1,14 +1,14 @@
-.has-hero .main-content {
+/* .has-hero .main-content {
   margin-top: 0;
-}
+} */
 
-.hero-section {
+/* .hero-section {
   position: relative;
   height: 100vh;
   min-height: 600px;
   overflow: hidden;
   z-index: 1;
-}
+} */
 
 .hero-overlay {
   position: absolute;
@@ -18,8 +18,8 @@
   height: 100%;
   background: linear-gradient(
     120deg,
-    rgba(80, 44, 44, 0.376) 0%,
-    rgba(219, 52, 52, 0.212) 100%
+    var(--primary-color-light) 0%,
+    var(--primary-color) 80%
   );
   z-index: 1;
   pointer-events: none;
@@ -48,16 +48,6 @@
   width: 100%;
   padding-left: 20px;
   padding-right: 20px;
-  animation: floatHero 6s ease-in-out infinite alternate;
-}
-
-@keyframes floatHero {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(-12px);
-  }
 }
 
 #hero-content .hero-title {
@@ -204,9 +194,13 @@
 }
 /* Footer */
 .footer {
-  background: var(--secondary-dark);
+  background: linear-gradient(
+    120deg,
+    var(--secondary-darker),
+    var(--secondary-dark)
+  );
   color: var(--white);
-  padding: 40px 0 20px 0;
+  padding: 20px 0 20px 0;
   text-align: center;
   position: relative;
   z-index: 10;
@@ -311,7 +305,7 @@
   min-height: 420px;
   border-radius: var(--border-radius-xl);
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.1);
+  box-shadow: 0 20px 60px rgba(var(--primary-darker-rgb), 0.12);
   border: 1px solid var(--light-gray);
 }
 
@@ -332,7 +326,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(var(--white-rgb), 0.92);
   padding: 16px 24px;
   border-radius: var(--border-radius-large);
   border: 1px dashed var(--light-gray);
@@ -431,7 +425,6 @@
 
 .cta-section .cta-button.primary {
   background: var(--white);
-  color: var(--secondary-color);
   border: 2px solid var(--white);
 }
 
@@ -714,15 +707,15 @@ main section .features_for {
 :root {
   --landing-gradient: linear-gradient(
     180deg,
-    #fff8f8 0%,
-    #fef2f2 45%,
-    #ffffff 100%
+    var(--surface-peach) 0%,
+    var(--surface-lavender) 45%,
+    var(--white) 100%
   );
-  --chip-bg: rgba(255, 255, 255, 0.85);
-  --ghost-border: rgba(255, 255, 255, 0.45);
-  --glass-shadow-modern: 0 18px 40px rgba(15, 23, 42, 0.08);
-  --chip-shadow-modern: 0 10px 30px rgba(255, 174, 174, 0.25);
-  --stack-bg-modern: rgba(255, 255, 255, 0.92);
+  --chip-bg: rgba(var(--white-rgb), 0.85);
+  --ghost-border: rgba(var(--white-rgb), 0.45);
+  --glass-shadow-modern: 0 18px 40px rgba(var(--primary-darker-rgb), 0.08);
+  --chip-shadow-modern: 0 10px 30px rgba(var(--secondary-rgb), 0.25);
+  --stack-bg-modern: rgba(var(--white-rgb), 0.92);
 }
 
 .landing-main {
@@ -735,14 +728,15 @@ main section .features_for {
 .hero--landing {
   position: relative;
   min-height: 70vh;
+  height: calc(100vh - var(--navbar-height));
   display: flex;
   align-items: center;
   padding: 48px 0 80px;
   color: var(--white);
   background: linear-gradient(
     120deg,
-    rgba(80, 44, 44, 0.92),
-    rgba(219, 52, 52, 0.65)
+    rgba(var(--primary-darker-rgb), 0.92),
+    rgba(var(--primary-rgb), 0.65)
   );
 }
 
@@ -752,8 +746,8 @@ main section .features_for {
   inset: 0;
   background: linear-gradient(
       140deg,
-      rgba(29, 12, 12, 0.75) 0%,
-      rgba(219, 52, 52, 0.35) 80%
+      rgba(var(--primary-darker-rgb), 0.75) 0%,
+      rgba(var(--secondary-rgb), 0.35) 80%
     ),
     url("images/hero-img.png") center/cover no-repeat;
   opacity: 0.55;
@@ -765,12 +759,12 @@ main section .features_for {
   inset: 0;
   background: radial-gradient(
       circle at top left,
-      rgba(255, 255, 255, 0.2) 0%,
+      rgba(var(--white-rgb), 0.2) 0%,
       transparent 45%
     ),
     radial-gradient(
       circle at bottom right,
-      rgba(255, 127, 127, 0.25) 0%,
+      rgba(var(--secondary-rgb), 0.25) 0%,
       transparent 55%
     );
   z-index: 0;
@@ -795,12 +789,12 @@ main section .features_for {
 .hero__copy h1 {
   font-size: clamp(2.6rem, 4vw, 3.5rem);
   line-height: 1.1;
-  color: rgba(255, 255, 255, 0.95);
-  text-shadow: 0 14px 40px rgba(0, 0, 0, 0.3);
+  color: rgba(var(--white-rgb), 0.95);
+  text-shadow: 0 14px 40px var(--shadow-hero);
 }
 
 .hero__copy p {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(var(--white-rgb), 0.85);
   font-size: 1.15rem;
   line-height: 1.7;
 }
@@ -843,8 +837,8 @@ main section .features_for {
 }
 
 .metric-card {
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(var(--white-rgb), 0.12);
+  border: 1px solid rgba(var(--white-rgb), 0.2);
   border-radius: 20px;
   padding: 16px 18px;
   text-align: center;
@@ -861,7 +855,7 @@ main section .features_for {
 
 .metric-card__label {
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(var(--white-rgb), 0.75);
 }
 
 .hero__media {
@@ -898,14 +892,14 @@ main section .features_for {
 
 .cta-button.ghost {
   background: transparent;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(var(--white-rgb), 0.9);
   border: 1.5px solid var(--ghost-border);
 }
 
 .cta-button.ghost:hover {
-  border-color: rgba(255, 255, 255, 0.75);
+  border-color: rgba(var(--white-rgb), 0.75);
   color: var(--white);
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(var(--white-rgb), 0.12);
   transform: translateY(-2px);
 }
 
@@ -927,9 +921,9 @@ main section .features_for {
   gap: 18px;
   padding: 28px;
   border-radius: 28px;
-  background: linear-gradient(145deg, #fff9f7, #ffffff);
-  border: 1px solid rgba(219, 52, 52, 0.12);
-  box-shadow: 0 20px 40px rgba(219, 52, 52, 0.08);
+  background: linear-gradient(145deg, var(--surface-peach), var(--white));
+  border: 1px solid rgba(var(--secondary-dark-rgb), 0.12);
+  box-shadow: 0 20px 40px rgba(var(--primary-darker-rgb), 0.08);
   align-items: flex-start;
 }
 
@@ -937,7 +931,7 @@ main section .features_for {
   width: 48px;
   height: 48px;
   border-radius: 16px;
-  background: rgba(219, 52, 52, 0.12);
+  background: rgba(var(--secondary-dark-rgb), 0.12);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1014,7 +1008,7 @@ main section .features_for {
 
 .preview-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 25px 35px rgba(219, 52, 52, 0.15);
+  box-shadow: 0 25px 35px rgba(var(--primary-darker-rgb), 0.15);
 }
 
 .preview-card__image img {
@@ -1053,8 +1047,8 @@ main section .features_for {
   padding: 90px 0;
   background: linear-gradient(
     180deg,
-    rgba(255, 241, 241, 0.8) 0%,
-    rgba(255, 255, 255, 0.95) 100%
+    rgba(var(--secondary-rgb), 0.12) 0%,
+    rgba(var(--white-rgb), 0.95) 100%
   );
 }
 
@@ -1076,7 +1070,7 @@ main section .features_for {
   border-radius: 24px;
   padding: 36px 32px;
   box-shadow: var(--glass-shadow-modern);
-  border: 1px solid rgba(255, 202, 202, 0.4);
+  border: 1px solid rgba(var(--secondary-rgb), 0.4);
 }
 
 .flow-column h3 {
@@ -1095,7 +1089,7 @@ main section .features_for {
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: rgba(219, 52, 52, 0.1);
+  background: rgba(var(--secondary-dark-rgb), 0.1);
   color: var(--secondary-color);
 }
 
@@ -1112,8 +1106,8 @@ main section .features_for {
   padding: 110px 0 120px;
   background: linear-gradient(
     120deg,
-    rgba(80, 44, 44, 0.92) 0%,
-    rgba(219, 52, 52, 0.78) 80%
+    rgba(var(--primary-darker-rgb), 0.92) 0%,
+    rgba(var(--primary-rgb), 0.68) 80%
   );
   color: var(--white);
   position: relative;
@@ -1126,12 +1120,12 @@ main section .features_for {
   inset: 0;
   background: radial-gradient(
       circle at top right,
-      rgba(255, 255, 255, 0.2) 0%,
+      rgba(var(--white-rgb), 0.2) 0%,
       transparent 45%
     ),
     radial-gradient(
       circle at bottom left,
-      rgba(255, 255, 255, 0.15) 0%,
+      rgba(var(--white-rgb), 0.15) 0%,
       transparent 50%
     );
   pointer-events: none;
@@ -1149,13 +1143,13 @@ main section .features_for {
 .cta-panel__copy h2 {
   font-size: clamp(2.2rem, 3vw, 3rem);
   margin-bottom: 20px;
-  color: rgba(255, 255, 255, 0.95);
+  color: rgba(var(--white-rgb), 0.95);
 }
 
 .cta-panel__copy p {
   font-size: 1.1rem;
   line-height: 1.75;
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(var(--white-rgb), 0.78);
 }
 
 .cta-panel__actions {
@@ -1166,7 +1160,7 @@ main section .features_for {
 }
 
 .text-link-inverse {
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(var(--white-rgb), 0.88);
   font-weight: 600;
 }
 

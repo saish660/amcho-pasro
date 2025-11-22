@@ -6,10 +6,10 @@ main {
 
 .store-finder-hero {
   background: linear-gradient(
-    120deg,
-    rgba(80, 44, 44, 0.98),
-    rgba(219, 52, 52, 0.85) 58%,
-    rgba(255, 174, 174, 0.76)
+    130deg,
+    var(--primary-darker),
+    var(--primary-color),
+    var(--primary-light)
   );
   padding-bottom: clamp(36px, 6vw, 56px);
 }
@@ -43,6 +43,10 @@ main {
 .store-finder-hero__visual {
   display: flex;
   justify-content: flex-end;
+}
+
+.btn-ghost {
+  color: var(--surface-peach);
 }
 
 .finder-hero-card {
