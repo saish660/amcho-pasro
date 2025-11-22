@@ -145,13 +145,32 @@
             {% endif %} {% endwith %}
 
             <form
-              class="auth-form"
+              id="sellerSignupForm"
+              class="auth-form multi-step-form"
               method="POST"
               action="{{ url_for('seller_signup') }}"
               enctype="multipart/form-data"
             >
-              <div class="form-section">
+              <div class="form-progress" aria-label="Seller signup progress">
+                <div class="form-progress__step" data-step="1">
+                  <span class="step-index">1</span>
+                  <span class="step-label">Personal</span>
+                </div>
+                <div class="form-progress__step" data-step="2">
+                  <span class="step-index">2</span>
+                  <span class="step-label">Storefront</span>
+                </div>
+                <div class="form-progress__step" data-step="3">
+                  <span class="step-index">3</span>
+                  <span class="step-label">Map</span>
+                </div>
+              </div>
+
+              <div class="form-step" data-step="1">
                 <h3 class="section-title">Personal information</h3>
+                <p class="step-subtitle">
+                  Introduce yourself so customers know who is behind the store.
+                </p>
                 <div class="form-row">
                   <div class="form-group">
                     <label for="firstName">First name</label>
@@ -228,8 +247,11 @@
                 </div>
               </div>
 
-              <div class="form-section">
+              <div class="form-step" data-step="2">
                 <h3 class="section-title">Storefront details</h3>
+                <p class="step-subtitle">
+                  Help buyers understand what you sell and where to find you.
+                </p>
                 <div class="form-group">
                   <label for="storeName">Store or business name</label>
                   <input
@@ -277,8 +299,12 @@
                 </div>
               </div>
 
-              <div class="form-section">
+              <div class="form-step" data-step="3">
                 <h3 class="section-title">Pin your shop on the map</h3>
+                <p class="step-subtitle">
+                  Use the map to place an accurate marker so locals can reach
+                  you.
+                </p>
                 <div class="form-group">
                   <label for="addressSearch">Search shop address</label>
                   <input
@@ -330,9 +356,25 @@
                 <input type="hidden" name="address" id="address" />
               </div>
 
-              <button type="submit" class="auth-button">
-                Create seller account
-              </button>
+              <div class="form-navigation">
+                <button
+                  type="button"
+                  class="form-nav-button"
+                  data-step-action="prev"
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  class="form-nav-button form-nav-button--primary"
+                  data-step-action="next"
+                >
+                  Continue
+                </button>
+                <button type="submit" class="auth-button form-submit">
+                  Create seller account
+                </button>
+              </div>
 
               <div class="auth-divider"><span>or</span></div>
 

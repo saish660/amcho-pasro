@@ -196,8 +196,8 @@
 .footer {
   background: linear-gradient(
     120deg,
-    var(--secondary-darker),
-    var(--secondary-dark)
+    var(--secondary-dark),
+    var(--secondary-color)
   );
   color: var(--white);
   padding: 20px 0 20px 0;
@@ -255,17 +255,10 @@
   padding: 80px 0;
 }
 
-.goa-map__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 40px;
-  align-items: center;
-}
-
 .goa-map__copy h2 {
-  font-size: 2.2rem;
-  margin-bottom: 16px;
-  color: var(--secondary-dark);
+  font-size: 2.4rem;
+  margin-bottom: 20px;
+  color: var(--primary-color);
 }
 
 .goa-map__copy p {
@@ -747,7 +740,7 @@ main section .features_for {
   background: linear-gradient(
       140deg,
       rgba(var(--primary-darker-rgb), 0.75) 0%,
-      rgba(var(--secondary-rgb), 0.35) 80%
+      rgba(var(--primary-rgb), 0.35) 80%
     ),
     url("images/hero-img.png") center/cover no-repeat;
   opacity: 0.55;
@@ -905,7 +898,7 @@ main section .features_for {
 
 .experience-panels {
   background: var(--white);
-  padding: 70px 0;
+  padding: 20px 0 70px 0;
   position: relative;
   z-index: 2;
 }
@@ -930,6 +923,7 @@ main section .features_for {
 .experience-card__icon {
   width: 48px;
   height: 48px;
+  padding: 20px;
   border-radius: 16px;
   background: rgba(var(--secondary-dark-rgb), 0.12);
   display: inline-flex;

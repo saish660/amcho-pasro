@@ -273,7 +273,7 @@ main {
 .map-readout dd {
   margin: 0;
   font-size: 1.05rem;
-  color: var(--secondary-dark);
+  color: var(--primary-dark);
   font-weight: 600;
 }
 
@@ -329,6 +329,26 @@ main {
   border-radius: 999px;
   font-size: 0.85rem;
   font-weight: 600;
+}
+
+.store-card {
+  padding: 10px;
+  width: 100%;
+  background-color: rgba(var(--primary-rgb), 0.05);
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.store-card h3 {
+  color: var(--primary-dark);
+}
+
+.store-card:hover {
+  outline: 2px solid rgba(var(--primary-rgb), 0.2);
+}
+
+#finder-reset {
+  color: var(--secondary-dark);
 }
 
 @media (max-width: 1024px) {

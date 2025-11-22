@@ -313,7 +313,7 @@
     <main class="dashboard">
       <div class="dashboard__inner">
         <div class="dashboard__intro">
-          <a href="{{ url_for('products') }}" class="back-link">← Back to products</a>
+          <a href="{{ url_for('products') }}" class="back-link">Back to products</a>
           <div class="breadcrumbs">
             <span>Seller hub</span>
             <span aria-hidden="true">›</span>
@@ -331,7 +331,7 @@
                 <div class="spotlight__meta">
                   <span class="spotlight__price">₹{{ '%.2f'|format(latest_product.price) }}</span>
                   <span class="spotlight__time">Added {{ latest_product.created_at.strftime('%b %d, %Y') }}</span>
-                  <a href="{{ url_for('product_detail', product_id=latest_product.id) }}" class="spotlight__link">View listing →</a>
+                  <a href="{{ url_for('product_detail', product_id=latest_product.id) }}" class="spotlight__link">View listing</a>
                 </div>
               </div>
             </div>
@@ -391,11 +391,9 @@
                       </p>
                       <div class="product-card__meta">
                         <span class="product-card__meta-item">
-                          <span class="icon">🗓</span>
                           {{ product.created_at.strftime('%b %d, %Y') }}
                         </span>
                         <span class="product-card__meta-item">
-                          <span class="icon">📍</span>
                           {{ store_owner.store_city or '—' }}
                         </span>
                       </div>

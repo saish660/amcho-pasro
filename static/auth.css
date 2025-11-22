@@ -4,7 +4,9 @@ main {
 
 .auth-hero {
   padding: clamp(52px, 6vw, 76px) 0;
-  height: calc(100vh - var(--navbar-height));
+  min-height: calc(100vh - var(--navbar-height));
+  height: auto;
+  overflow: visible;
   color: rgba(var(--white-rgb), 0.95);
 }
 

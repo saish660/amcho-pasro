@@ -181,7 +181,7 @@
     }
     list.forEach((s) => {
       const card = document.createElement("div");
-      card.className = "product-card";
+      card.className = "store-card";
       card.addEventListener("click", () => {
         window.location.href = `/store/${s.id}`;
       });

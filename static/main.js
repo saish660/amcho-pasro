@@ -165,4 +165,98 @@ document.addEventListener("DOMContentLoaded", function () {
       alert(`${provider} authentication would be implemented here.`);
     });
   });
+
+  function validateStep(stepEl) {
+    if (!stepEl) return true;
+    const controls = stepEl.querySelectorAll("input, select, textarea");
+    for (const control of controls) {
+      if (typeof control.reportValidity === "function") {
+        if (!control.reportValidity()) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  function initMultiStepForms() {
+    const forms = document.querySelectorAll(".multi-step-form");
+    forms.forEach((form) => {
+      const steps = Array.from(form.querySelectorAll(".form-step"));
+      if (steps.length <= 1) return;
+      const progressSteps = Array.from(
+        form.querySelectorAll(".form-progress__step")
+      );
+      const prevBtn = form.querySelector('[data-step-action="prev"]');
+      const nextBtn = form.querySelector('[data-step-action="next"]');
+      const submitBtn = form.querySelector(".form-submit");
+      let activeIndex = 0;
+
+      form.classList.add("multi-step-enabled");
+
+      function setStep(newIndex) {
+        if (newIndex < 0 || newIndex >= steps.length) return;
+        steps.forEach((step, idx) => {
+          const isActive = idx === newIndex;
+          step.classList.toggle("is-active", isActive);
+          step.setAttribute("aria-hidden", String(!isActive));
+        });
+
+        progressSteps.forEach((stepIndicator, idx) => {
+          stepIndicator.classList.toggle("is-active", idx === newIndex);
+          stepIndicator.classList.toggle("is-complete", idx < newIndex);
+        });
+
+        if (prevBtn) {
+          prevBtn.disabled = newIndex === 0;
+        }
+
+        if (nextBtn) {
+          nextBtn.hidden = newIndex === steps.length - 1;
+        }
+
+        if (submitBtn) {
+          submitBtn.hidden = newIndex !== steps.length - 1;
+        }
+
+        activeIndex = newIndex;
+        window.dispatchEvent(
+          new CustomEvent("amcho:stepchange", {
+            detail: {
+              formId: form.id || null,
+              stepIndex: activeIndex,
+              stepNumber: activeIndex + 1,
+            },
+          })
+        );
+      }
+
+      setStep(activeIndex);
+
+      form.addEventListener("click", (event) => {
+        const actionTrigger = event.target.closest("[data-step-action]");
+        if (!actionTrigger) return;
+        event.preventDefault();
+        const action = actionTrigger.dataset.stepAction;
+        if (action === "next") {
+          const currentStep = steps[activeIndex];
+          if (!validateStep(currentStep)) return;
+          setStep(activeIndex + 1);
+        } else if (action === "prev") {
+          setStep(activeIndex - 1);
+        }
+      });
+
+      form.addEventListener("submit", (event) => {
+        if (activeIndex !== steps.length - 1) {
+          event.preventDefault();
+          const currentStep = steps[activeIndex];
+          if (!validateStep(currentStep)) return;
+          setStep(activeIndex + 1);
+        }
+      });
+    });
+  }
+
+  initMultiStepForms();
 });

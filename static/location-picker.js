@@ -252,4 +252,10 @@ window.initLocationPicker = function (config) {
       setReadout(lat, lng, addr || "");
     }
   })();
+
+  window.addEventListener("amcho:stepchange", () => {
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 150);
+  });
 };
