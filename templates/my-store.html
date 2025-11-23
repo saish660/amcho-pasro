@@ -129,10 +129,14 @@
           <div class="store-grid">
             <aside class="store-profile-card">
               <div class="profile-badge">Seller Dashboard</div>
+              {% set store_avatar_url =
+              media_url(current_user.store_image_media_id,
+              current_user.store_image, default='images/default_store_img.png')
+              %}
               <div class="store-image-wrapper">
                 <div class="store-image-glow"></div>
                 <img
-                  src="{{ url_for('static', filename=( 'uploads/' ~ current_user.store_image ) if current_user.store_image else 'images/default_store_img.png') }}"
+                  src="{{ store_avatar_url }}"
                   alt="{{ current_user.store_name or 'Store image' }}"
                   class="store-image"
                 />
@@ -225,7 +229,7 @@
                   <div class="upload-field">
                     <div class="upload-preview">
                       <img
-                        src="{{ url_for('static', filename=( 'uploads/' ~ current_user.store_image ) if current_user.store_image else 'images/default_store_img.png') }}"
+                        src="{{ store_avatar_url }}"
                         alt="Current store image"
                       />
                     </div>

@@ -10,6 +10,7 @@ from bson import ObjectId
 from bson.errors import InvalidId
 from flask import (
     Flask,
+    Response,
     abort,
     flash,
     jsonify,
@@ -26,6 +27,8 @@ from flask_login import (
     login_user,
     logout_user,
 )
+from gridfs import GridFS
+from gridfs.errors import NoFile
 from pymongo import ASCENDING, DESCENDING, MongoClient
 from pymongo.errors import DuplicateKeyError
 from dotenv import load_dotenv
@@ -47,14 +50,10 @@ app.config["MONGODB_DB_NAME"] = os.environ.get("MONGODB_DB_NAME", "amcho_pasro")
 mongo_client = MongoClient(app.config["MONGODB_URI"])
 mongo_db = mongo_client[app.config["MONGODB_DB_NAME"]]
 
-UPLOAD_FOLDER = "static/uploads"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(os.path.join(UPLOAD_FOLDER, "product_images"), exist_ok=True)
-os.makedirs(os.path.join(UPLOAD_FOLDER, "store_images"), exist_ok=True)
+media_fs = GridFS(mongo_db, collection="media_files")
 
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
@@ -299,7 +298,10 @@ except Exception as exc:  # pragma: no cover - best effort startup
 
 @app.context_processor
 def inject_globals() -> Dict[str, Any]:
-    return {"current_year": datetime.utcnow().year}
+    return {
+        "current_year": datetime.utcnow().year,
+        "media_url": media_url,
+    }
 
 
 @login_manager.user_loader
@@ -311,15 +313,129 @@ def allowed_file(filename: str) -> bool:
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def resolve_store_image_path(user: User) -> str:
-    filename = user.store_image
-    if not filename or filename == "default_store_img.png":
-        rel_path = "images/default_store_img.png"
-    elif str(filename).startswith(("uploads/", "images/")):
-        rel_path = filename
-    else:
-        rel_path = f"uploads/{str(filename).lstrip('/')}"
+def save_media_file(
+    file_storage: Any,
+    *,
+    owner_id: Optional[ObjectId] = None,
+    usage: Optional[str] = None,
+) -> Optional[ObjectId]:
+    """Persist an uploaded file in MongoDB GridFS and return its id."""
+
+    if not file_storage or not getattr(file_storage, "filename", None):
+        return None
+    sanitized_name = secure_filename(file_storage.filename)
+    if not sanitized_name or not allowed_file(sanitized_name):
+        return None
+
+    stream = getattr(file_storage, "stream", None)
+    if stream and hasattr(stream, "seek"):
+        try:
+            stream.seek(0)
+        except OSError:
+            pass
+    data = file_storage.read()
+    if not data:
+        return None
+
+    metadata: Dict[str, Any] = {}
+    if owner_id:
+        metadata["owner_id"] = owner_id
+    if usage:
+        metadata["usage"] = usage
+
+    media_id = media_fs.put(
+        data,
+        filename=sanitized_name,
+        content_type=getattr(file_storage, "mimetype", None) or "application/octet-stream",
+        metadata=metadata or None,
+    )
+    return media_id if isinstance(media_id, ObjectId) else to_object_id(media_id)
+
+
+def delete_media_file(media_id: Any) -> None:
+    """Remove a previously stored media file if it exists."""
+
+    oid = to_object_id(media_id)
+    if not oid:
+        return
+    try:
+        media_fs.delete(oid)
+    except NoFile:
+        return
+
+
+def _resolve_media_reference(ref: Any) -> Optional[str]:
+    if ref in (None, ""):
+        return None
+    if isinstance(ref, ObjectId):
+        return url_for("serve_media", media_id=str(ref))
+    if isinstance(ref, (list, tuple)):
+        for entry in ref:
+            url = _resolve_media_reference(entry)
+            if url:
+                return url
+        return None
+    ref_str = str(ref).strip()
+    if not ref_str:
+        return None
+    oid = to_object_id(ref_str)
+    if oid:
+        return url_for("serve_media", media_id=str(oid))
+    if ref_str.startswith(("http://", "https://", "data:")):
+        return ref_str
+    rel_path = ref_str.lstrip("/")
+    if not rel_path.startswith("uploads/"):
+        legacy_prefixes = ("product_images/", "store_images/")
+        for prefix in legacy_prefixes:
+            if rel_path.startswith(prefix):
+                rel_path = f"uploads/{rel_path}"
+                break
     return url_for("static", filename=rel_path)
+
+
+def media_url(*candidates: Any, default: Optional[str] = None) -> str:
+    """Return the first resolvable media URL from the provided candidates."""
+
+    for candidate in candidates:
+        url = _resolve_media_reference(candidate)
+        if url:
+            return url
+    if default:
+        return url_for("static", filename=default)
+    return ""
+
+
+def resolve_store_image_path(user: User) -> str:
+    return media_url(
+        user._data.get("store_image_media_id"),
+        user._data.get("store_image"),
+        default="images/default_store_img.png",
+    )
+
+
+@app.route("/media/<string:media_id>")
+def serve_media(media_id: str):
+    oid = to_object_id(media_id)
+    if not oid:
+        abort(404)
+    try:
+        grid_out = media_fs.get(oid)
+    except NoFile:
+        abort(404)
+
+    payload = grid_out.read()
+    response = Response(payload, mimetype=grid_out.content_type or "application/octet-stream")
+    response.headers["Cache-Control"] = "public, max-age=31536000"
+    if grid_out.length is not None:
+        response.headers["Content-Length"] = str(grid_out.length)
+
+    display_name = secure_filename(grid_out.filename or media_id) or media_id
+    response.headers["Content-Disposition"] = f'inline; filename="{display_name}"'
+
+    upload_ts = getattr(grid_out, "upload_date", None)
+    if isinstance(upload_ts, datetime):
+        response.last_modified = upload_ts
+    return response
 
 
 @app.route("/")
@@ -532,15 +648,9 @@ def seller_signup():
         elif User.get_by_email(email):
             flash("An account with this email already exists", "error")
         else:
-            store_image = None
+            store_image_media_id = None
             if image_file and image_file.filename and allowed_file(image_file.filename):
-                store_img_folder = os.path.join(app.config["UPLOAD_FOLDER"], "store_images")
-                os.makedirs(store_img_folder, exist_ok=True)
-                filename = secure_filename(image_file.filename)
-                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_")
-                filename = timestamp + filename
-                image_file.save(os.path.join(store_img_folder, filename))
-                store_image = f"store_images/{filename}"
+                store_image_media_id = save_media_file(image_file, usage="store-avatar")
             doc = {
                 "username": username,
                 "email": email,
@@ -553,7 +663,7 @@ def seller_signup():
                 "store_latitude": store_lat,
                 "store_longitude": store_lng,
                 "store_address": addr_full or None,
-                "store_image": store_image,
+                "store_image_media_id": store_image_media_id,
                 "created_at": datetime.utcnow(),
             }
             try:
@@ -578,17 +688,10 @@ def post_product():
         quantity = request.form.get("quantity", "1")
         description = request.form.get("description", "").strip()
         category_raw = request.form.get("category")
-        image_filename = None
-        if "image" in request.files:
-            file = request.files["image"]
-            if file and file.filename and allowed_file(file.filename):
-                prod_img_folder = os.path.join(app.config["UPLOAD_FOLDER"], "product_images")
-                os.makedirs(prod_img_folder, exist_ok=True)
-                filename = secure_filename(file.filename)
-                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_")
-                filename = timestamp + filename
-                file.save(os.path.join(prod_img_folder, filename))
-                image_filename = f"product_images/{filename}"
+        image_media_id = None
+        upload = request.files.get("image")
+        if upload and upload.filename and allowed_file(upload.filename):
+            image_media_id = save_media_file(upload, owner_id=current_user.mongo_id, usage="product-image")
         if not title or not price:
             flash("Title and price are required fields", "error")
         else:
@@ -610,7 +713,7 @@ def post_product():
                         "price": price_float,
                         "quantity": quantity_int,
                         "description": description,
-                        "image_filename": image_filename,
+                        "image_media_id": image_media_id,
                         "user_id": current_user.mongo_id,
                         "category_id": category_id,
                         "created_at": datetime.utcnow(),
@@ -678,13 +781,10 @@ def edit_store():
         if store_lng is not None:
             update_doc["store_longitude"] = store_lng
         if image_file and image_file.filename and allowed_file(image_file.filename):
-            store_img_folder = os.path.join(app.config["UPLOAD_FOLDER"], "store_images")
-            os.makedirs(store_img_folder, exist_ok=True)
-            filename = secure_filename(image_file.filename)
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_")
-            filename = timestamp + filename
-            image_file.save(os.path.join(store_img_folder, filename))
-            update_doc["store_image"] = f"store_images/{filename}"
+            new_media_id = save_media_file(image_file, owner_id=user.mongo_id, usage="store-avatar")
+            if new_media_id:
+                delete_media_file(user._data.get("store_image_media_id"))
+                update_doc["store_image_media_id"] = new_media_id
         if update_doc:
             mongo_db.users.update_one({"_id": user.mongo_id}, {"$set": update_doc})
             user.refresh_from_db()

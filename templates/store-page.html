@@ -157,6 +157,8 @@
     {% set latest_product = products[0] if products else None %}
     {% set first_product = (products|last) if products else None %}
 
+    {% set hero_avatar_url = media_url(store_owner.store_image_media_id, store_owner.store_image, default='images/default_store_img.png') %}
+
     <!-- Store Hero -->
     <header class="store-hero">
       <div class="store-hero__backdrop"></div>
@@ -165,7 +167,7 @@
         <div class="store-hero__profile">
           <div class="hero-avatar">
             <img
-              src="{{ url_for('static', filename=( 'uploads/' ~ store_owner.store_image ) if store_owner.store_image else 'images/default_store_img.png') }}"
+              src="{{ hero_avatar_url }}"
               alt="{{ store_owner.store_name }} profile"
             />
           </div>
@@ -258,11 +260,12 @@
                 </div>
               </div>
 
+              {% set current_avatar_preview = media_url(store_owner.store_image_media_id, store_owner.store_image) %}
               <div class="form-field">
                 <label for="store_image">Store avatar</label>
                 <div class="image-upload">
-                  {% if store_owner.store_image %}
-                    <img src="{{ url_for('static', filename='uploads/' ~ store_owner.store_image) }}" alt="Current store image" />
+                  {% if current_avatar_preview %}
+                    <img src="{{ current_avatar_preview }}" alt="Current store image" />
                   {% endif %}
                   <label class="upload-trigger" for="store_image">Upload new image</label>
                   <input type="file" id="store_image" name="store_image" accept="image/*" />
@@ -370,9 +373,10 @@
                     onclick="location.href='{{ url_for('product_detail', product_id=product.id) }}'"
                     onkeypress="if(event.key==='Enter'){ location.href='{{ url_for('product_detail', product_id=product.id) }}'; }"
                   >
+                    {% set product_image_url = media_url(product.image_media_id, product.image_filename) %}
                     <div class="product-card__image">
-                      {% if product.image_filename %}
-                        <img src="{{ url_for('static', filename='uploads/' + product.image_filename) }}" alt="{{ product.title }}" loading="lazy" />
+                      {% if product_image_url %}
+                        <img src="{{ product_image_url }}" alt="{{ product.title }}" loading="lazy" />
                       {% else %}
                         <div class="product-card__placeholder" aria-hidden="true">No image</div>
                       {% endif %}

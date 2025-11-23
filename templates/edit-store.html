@@ -124,9 +124,11 @@
                 >
               </div>
 
+              {% set existing_image_url = media_url(user.store_image_media_id,
+              user.store_image) %}
               <div class="form-section">
                 <h3 class="section-title">Store image</h3>
-                {% if user.store_image %}
+                {% if existing_image_url %}
                 <div class="form-group">
                   <label>Current image</label>
                   <div
@@ -134,7 +136,7 @@
                     style="width: 86px; height: 86px"
                   >
                     <img
-                      src="{{ url_for('static', filename='uploads/' ~ user.store_image) }}"
+                      src="{{ existing_image_url }}"
                       alt="Current store image"
                     />
                   </div>
