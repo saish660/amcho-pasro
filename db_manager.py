@@ -1,152 +1,154 @@
 #!/usr/bin/env python3
-"""
-Database management script for Amcho Pasro Flask app
-Usage: python db_manager.py [command]
+"""Database management helpers for the Amcho Pasro Flask app (MongoDB).
+
+Usage: python db_manager.py <command>
 
 Commands:
   list_users    - List all users in the database
   create_user   - Create a new user (interactive)
   delete_user   - Delete a user by email
-  reset_db      - Delete all data and recreate tables
+  reset_db      - Delete user-generated collections (users, products, reviews)
 """
 
+from __future__ import annotations
+
 import sys
-import os
+from datetime import datetime
+from getpass import getpass
 
-# Add current directory to Python path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
+from pymongo import ASCENDING
+from pymongo.errors import DuplicateKeyError
 from werkzeug.security import generate_password_hash
 
-# Import Flask app components
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin
+try:
+    from app import mongo_db, seed_default_categories, User
+except Exception as exc:  # pragma: no cover - CLI helper
+    print(f"Unable to import Flask app context: {exc}")
+    sys.exit(1)
 
-# Recreate app context for database operations
-app = Flask(__name__)
-# Use instance folder DB like the app
-os.makedirs(app.instance_path, exist_ok=True)
-db_path = os.path.join(app.instance_path, 'amcho_pasro.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(200), nullable=False)
-
-    def __repr__(self):
-        return f'<User {self.email}>'
-
-    @staticmethod
-    def get(user_id):
-        return User.query.get(int(user_id))
-
-    @staticmethod
-    def get_by_email(email):
-        return User.query.filter_by(email=email).first()
-
-def list_users():
-    """List all users in the database"""
-    with app.app_context():
-        users = User.query.all()
-        if not users:
-            print("No users found in database.")
-            return
-        
-        print(f"\n{'ID':<5} {'Username':<20} {'Email':<30}")
-        print("-" * 55)
-        for user in users:
-            print(f"{user.id:<5} {user.username:<20} {user.email:<30}")
-        print(f"\nTotal users: {len(users)}")
-
-def create_user():
-    """Create a new user interactively"""
-    with app.app_context():
-        print("\n--- Create New User ---")
-        username = input("Username: ").strip()
-        email = input("Email: ").strip()
-        password = input("Password: ").strip()
-        
-        if not username or not email or not password:
-            print("Error: All fields are required!")
-            return
-        
-        # Check if user already exists
-        if User.get_by_email(email):
-            print(f"Error: User with email '{email}' already exists!")
-            return
-        
-        # Create new user
-        password_hash = generate_password_hash(password)
-        new_user = User(
-            username=username,
-            email=email,
-            password_hash=password_hash
+def list_users() -> None:
+    """List all users with their key attributes."""
+    users = list(mongo_db.users.find().sort("created_at", ASCENDING))
+    if not users:
+        print("No users found in MongoDB.")
+        return
+    print(f"\n{'ID':<25} {'Email':<30} {'Username':<20} {'Type':<8} {'Created'}")
+    print("-" * 95)
+    for doc in users:
+        created = doc.get("created_at")
+        created_str = created.strftime("%Y-%m-%d %H:%M") if isinstance(created, datetime) else "n/a"
+        print(
+            f"{str(doc.get('_id')):<25} "
+            f"{doc.get('email', '-'):<30} "
+            f"{doc.get('username', '-'):<20} "
+            f"{doc.get('user_type', '-'):<8} "
+            f"{created_str}"
         )
-        
-        db.session.add(new_user)
-        db.session.commit()
-        print(f"Success: User '{username}' created with email '{email}'")
+    print(f"\nTotal users: {len(users)}")
 
-def delete_user():
-    """Delete a user by email"""
-    with app.app_context():
-        email = input("Enter email of user to delete: ").strip()
-        user = User.get_by_email(email)
-        
-        if not user:
-            print(f"Error: No user found with email '{email}'")
-            return
-        
-        confirm = input(f"Are you sure you want to delete user '{user.username}' ({email})? [y/N]: ")
-        if confirm.lower() != 'y':
-            print("Deletion cancelled.")
-            return
-        
-        db.session.delete(user)
-        db.session.commit()
-        print(f"Success: User '{user.username}' deleted.")
 
-def reset_db():
-    """Delete all data and recreate tables"""
-    with app.app_context():
-        confirm = input("This will DELETE ALL DATA. Are you sure? [y/N]: ")
-        if confirm.lower() != 'y':
-            print("Reset cancelled.")
-            return
-        
-        db.drop_all()
-        db.create_all()
-        print("Success: Database reset. All tables recreated.")
+def create_user() -> None:
+    """Create a new user interactively."""
+    print("\n--- Create New User ---")
+    username = input("Username: ").strip()
+    email = input("Email: ").strip()
+    password = getpass("Password: ").strip()
+    user_type = input("User type (buyer/seller) [buyer]: ").strip().lower() or "buyer"
 
-def show_help():
-    """Show help message"""
+    if not username or not email or not password:
+        print("Error: username, email, and password are required.")
+        return
+    if user_type not in {"buyer", "seller"}:
+        print("Error: user type must be 'buyer' or 'seller'.")
+        return
+    extra_fields = {}
+    if user_type == "seller":
+        extra_fields["store_name"] = input("Store name: ").strip() or None
+        extra_fields["store_location"] = input("Store location: ").strip() or None
+        extra_fields["store_city"] = input("Store city: ").strip() or None
+
+    if User.get_by_email(email):
+        print(f"Error: user with email {email!r} already exists.")
+        return
+
+    doc = {
+        "username": username,
+        "email": email,
+        "email_lower": User.normalize_email(email),
+        "password_hash": generate_password_hash(password),
+        "user_type": user_type,
+        "created_at": datetime.utcnow(),
+        **extra_fields,
+    }
+
+    try:
+        result = mongo_db.users.insert_one(doc)
+    except DuplicateKeyError:
+        print(f"Error: user with email {email!r} already exists.")
+        return
+
+    print(f"Success: created user {username!r} with id {result.inserted_id}")
+
+
+def delete_user() -> None:
+    """Delete a user by email."""
+    email = input("Enter email of user to delete: ").strip()
+    if not email:
+        print("Email is required.")
+        return
+    user = User.get_by_email(email)
+    if not user:
+        print(f"Error: No user found with email {email!r}.")
+        return
+    confirm = input(f"Are you sure you want to delete {user.username} ({email})? [y/N]: ")
+    if confirm.lower() != "y":
+        print("Deletion cancelled.")
+        return
+    mongo_db.users.delete_one({"_id": user.mongo_id})
+    mongo_db.products.delete_many({"user_id": user.mongo_id})
+    mongo_db.store_reviews.delete_many(
+        {"$or": [{"store_owner_id": user.mongo_id}, {"reviewer_id": user.mongo_id}]}
+    )
+    print("User and related data deleted.")
+
+
+def reset_db() -> None:
+    """Reset user-generated collections (drops users, products, and store_reviews)."""
+    confirm = input("This will DELETE all users, products, and reviews. Continue? [y/N]: ")
+    if confirm.lower() != "y":
+        print("Reset cancelled.")
+        return
+    mongo_db.users.delete_many({})
+    mongo_db.products.delete_many({})
+    mongo_db.store_reviews.delete_many({})
+    seed_default_categories()
+    print("Database reset. Default categories were re-seeded.")
+
+
+def show_help() -> None:
     print(__doc__)
 
-def main():
+
+def main() -> None:
     if len(sys.argv) < 2:
         show_help()
         return
-    
     command = sys.argv[1].lower()
-    
     commands = {
-        'list_users': list_users,
-        'create_user': create_user,
-        'delete_user': delete_user,
-        'reset_db': reset_db,
-        'help': show_help
+        "list_users": list_users,
+        "create_user": create_user,
+        "delete_user": delete_user,
+        "reset_db": reset_db,
+        "help": show_help,
     }
-    
-    if command in commands:
-        commands[command]()
-    else:
+    handler = commands.get(command)
+    if not handler:
         print(f"Unknown command: {command}")
         show_help()
+        return
+    handler()
+
 
 if __name__ == "__main__":
     main()
